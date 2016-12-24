@@ -114,23 +114,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Object o) {
             List<Region> lstRegion = (List<Region>) o;
+            String arr1[] = new String[lstRegion.size()];
+            int i = 0;
             for (Region item : lstRegion) {
-                String s1 = item.getName();
-                System.out.println(item.getName() + " " + item.getRegionID());
+                arr1[i] = item.getName();
+                i++;
             }
-            String arr[]={
-                    "Hàng điện tử",
-                    "Hàng hóa chất",
-                    "Hàng gia dụng"};
+
             Spinner spinner = (Spinner) findViewById(R.id.spinner);
             ArrayAdapter<String> adapter=new ArrayAdapter<String>
                     (
                             MainActivity.this,
                             android.R.layout.simple_spinner_item,
-                            arr
+                            arr1
                     );
             adapter.setDropDownViewResource
-                    (android.R.layout.simple_spinner_dropdown_item);
+                    (android.R.layout.simple_list_item_single_choice);
             spinner.setAdapter(adapter);
             //spinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_single_choice,lstRegion));
         }
