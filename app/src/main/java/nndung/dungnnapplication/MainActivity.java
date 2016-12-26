@@ -1,21 +1,17 @@
 package nndung.dungnnapplication;
 
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
@@ -24,58 +20,15 @@ import nndung.dungnnapplication.entity.Region;
 
 public class MainActivity extends AppCompatActivity {
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         new GetData().execute();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        new Login().execute("");
     }
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("Main Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
-    }
-
 
     class GetData extends AsyncTask {
         @Override
@@ -132,6 +85,48 @@ public class MainActivity extends AppCompatActivity {
                     (android.R.layout.simple_list_item_single_choice);
             spinner.setAdapter(adapter);
             //spinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_single_choice,lstRegion));
+        }
+    }
+    class Login extends  AsyncTask<String,Integer,String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String urlInput = "http://ship9k.com/oauth/token";
+            try {
+                URL url = new URL(urlInput);
+                HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
+                String data = "grant_type=password&username=0983007974&password=123456";
+                urlConnect.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                urlConnect.setRequestMethod("POST");
+                OutputStreamWriter writer = new OutputStreamWriter(urlConnect.getOutputStream());
+                writer.write(data);
+                writer.flush();
+                //urlConnect.setRequestProperty("Content-type", "Application/JSON");
+                int i = urlConnect.getResponseCode();
+
+                System.out.println(i);
+
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        urlConnect.getInputStream()));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    System.out.println(line);
+                }
+                in.close();
+                return "";
+
+            } catch (Exception ex) {
+                System.out.print("demo");
+
+                System.out.println(ex.getMessage());
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
         }
     }
 }
