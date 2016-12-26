@@ -1,11 +1,16 @@
 package nndung.dungnnapplication;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -15,12 +20,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-
+import nndung.dungnnapplication.entity.*;
 import nndung.dungnnapplication.entity.Region;
 
 public class MainActivity extends AppCompatActivity {
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         new GetData().execute();
         new Login().execute("");
     }
+
 
     class GetData extends AsyncTask {
         @Override
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Spinner spinner = (Spinner) findViewById(R.id.spinner);
-            ArrayAdapter<String> adapter=new ArrayAdapter<String>
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>
                     (
                             MainActivity.this,
                             android.R.layout.simple_spinner_item,
@@ -87,10 +91,11 @@ public class MainActivity extends AppCompatActivity {
             //spinner.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_single_choice,lstRegion));
         }
     }
-    class Login extends  AsyncTask<String,Integer,String> {
+
+    class Login extends AsyncTask<String, Integer, Token> {
 
         @Override
-        protected String doInBackground(String... params) {
+        protected Token doInBackground(String... params) {
             String urlInput = "http://ship9k.com/oauth/token";
             try {
                 URL url = new URL(urlInput);
@@ -109,12 +114,10 @@ public class MainActivity extends AppCompatActivity {
 
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         urlConnect.getInputStream()));
-                String line;
-                while ((line = in.readLine()) != null) {
-                    System.out.println(line);
-                }
+                String line = in.readLine();
+                Token token = new Gson().fromJson(line, Token.class);
                 in.close();
-                return "";
+                return token;
 
             } catch (Exception ex) {
                 System.out.print("demo");
@@ -125,9 +128,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(Token s) {
             super.onPostExecute(s);
+            if(s != null) {
+
+            }
         }
     }
+
 }
 
