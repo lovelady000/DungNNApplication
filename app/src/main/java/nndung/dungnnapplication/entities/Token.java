@@ -1,4 +1,4 @@
-package nndung.dungnnapplication.entity;
+package nndung.dungnnapplication.entities;
 
 /**
  * Created by nndun on 12/25/2016.

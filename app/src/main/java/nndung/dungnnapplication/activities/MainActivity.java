@@ -1,16 +1,11 @@
-package nndung.dungnnapplication;
+package nndung.dungnnapplication.activities;
 
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,8 +15,11 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import nndung.dungnnapplication.entity.*;
-import nndung.dungnnapplication.entity.Region;
+
+import nndung.dungnnapplication.R;
+import nndung.dungnnapplication.entities.*;
+import nndung.dungnnapplication.entities.Region;
+import nndung.dungnnapplication.utilities.Config;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -107,17 +105,20 @@ public class MainActivity extends AppCompatActivity {
                 writer.write(data);
                 writer.flush();
                 //urlConnect.setRequestProperty("Content-type", "Application/JSON");
-                int i = urlConnect.getResponseCode();
+                int responseCode = urlConnect.getResponseCode();
 
-                System.out.println(i);
+                System.out.println(responseCode);
 
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(
-                        urlConnect.getInputStream()));
-                String line = in.readLine();
-                Token token = new Gson().fromJson(line, Token.class);
-                in.close();
-                return token;
+                if(responseCode == 200) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(
+                            urlConnect.getInputStream()));
+                    String line = in.readLine();
+                    Token token = new Gson().fromJson(line, Token.class);
+                    in.close();
+                    return token;
+                } else {
+                    return null;
+                }
 
             } catch (Exception ex) {
                 System.out.print("demo");
@@ -133,10 +134,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Token s) {
-            super.onPostExecute(s);
-            if(s != null) {
-
+        protected void onPostExecute(Token token) {
+            super.onPostExecute(token);
+            if(token != null) {
+                Config.token = token;
             }
         }
     }
